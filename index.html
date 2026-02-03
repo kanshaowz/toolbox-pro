@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ToolBox Pro - Free Online Utility Tools</title>
+    <title id="page-title">ToolBox Pro - Free Online Utility Tools</title>
     <meta name="description" content="Free online utility tools: QR Code Generator, Password Generator, Unit Converter, Text Tools, and more. Fast, secure, and easy to use.">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -22,11 +22,65 @@
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
             min-height: 100vh;
         }
+        
+        /* Language Selector */
+        .lang-selector {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 1000;
+        }
+        
+        .lang-btn {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-primary);
+            padding: 8px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+        }
+        
+        .lang-btn:hover {
+            border-color: var(--accent);
+        }
+        
+        .lang-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            display: none;
+            min-width: 140px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+        
+        .lang-dropdown.show { display: block; }
+        
+        .lang-option {
+            padding: 10px 14px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .lang-option:hover { background: var(--bg-secondary); }
         
         .header {
             background: var(--bg-secondary);
@@ -48,8 +102,8 @@
         .nav-tabs {
             display: flex;
             justify-content: center;
-            gap: 10px;
-            padding: 15px;
+            gap: 8px;
+            padding: 12px;
             background: var(--bg-secondary);
             flex-wrap: wrap;
             position: sticky;
@@ -58,13 +112,13 @@
         }
         
         .nav-tab {
-            padding: 10px 20px;
+            padding: 8px 16px;
             background: transparent;
             border: 2px solid transparent;
             color: var(--text-secondary);
-            border-radius: 25px;
+            border-radius: 20px;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 500;
             transition: all 0.3s ease;
         }
@@ -229,7 +283,7 @@
         
         .options-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             gap: 10px;
             margin: 16px 0;
         }
@@ -326,46 +380,63 @@
         
         @media (max-width: 600px) {
             .header h1 { font-size: 1.5rem; }
-            .nav-tab { padding: 8px 14px; font-size: 0.8rem; }
+            .nav-tab { padding: 6px 12px; font-size: 0.75rem; }
             .converter-row { grid-template-columns: 1fr; }
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .lang-selector { top: 10px; right: 10px; }
         }
     </style>
 </head>
 <body>
+    <!-- Language Selector -->
+    <div class="lang-selector">
+        <button class="lang-btn" onclick="toggleLang()">
+            <span id="current-lang-flag">🇺🇸</span>
+            <span id="current-lang-name">English</span>
+            <span>▼</span>
+        </button>
+        <div class="lang-dropdown" id="langDropdown">
+            <div class="lang-option" onclick="setLang('en')">🇺🇸 English</div>
+            <div class="lang-option" onclick="setLang('zh')">🇨🇳 中文</div>
+            <div class="lang-option" onclick="setLang('es')">🇪🇸 Español</div>
+            <div class="lang-option" onclick="setLang('ja')">🇯🇵 日本語</div>
+            <div class="lang-option" onclick="setLang('ko')">🇰🇷 한국어</div>
+        </div>
+    </div>
+
     <header class="header">
-        <h1>🧰 ToolBox Pro</h1>
-        <p>Free Online Utility Tools - Fast, Secure, Easy</p>
+        <h1 data-i18n="appName">🧰 ToolBox Pro</h1>
+        <p data-i18n="appDesc">Free Online Utility Tools - Fast, Secure, Easy</p>
     </header>
 
     <nav class="nav-tabs">
-        <button class="nav-tab active" onclick="switchTab('password')">🔐 Password</button>
-        <button class="nav-tab" onclick="switchTab('qr')">📱 QR Code</button>
-        <button class="nav-tab" onclick="switchTab('color')">🎨 Color</button>
-        <button class="nav-tab" onclick="switchTab('converter')">🔄 Converter</button>
-        <button class="nav-tab" onclick="switchTab('calc')">🧮 Calculator</button>
-        <button class="nav-tab" onclick="switchTab('encoder')">🔀 Encoder</button>
-        <button class="nav-tab" onclick="switchTab('text')">📝 Text</button>
-        <button class="nav-tab" onclick="switchTab('json')">📋 JSON</button>
+        <button class="nav-tab active" onclick="switchTab('password')" data-i18n="navPassword">🔐 Password</button>
+        <button class="nav-tab" onclick="switchTab('qr')" data-i18n="navQR">📱 QR Code</button>
+        <button class="nav-tab" onclick="switchTab('color')" data-i18n="navColor">🎨 Color</button>
+        <button class="nav-tab" onclick="switchTab('converter')" data-i18n="navConverter">🔄 Converter</button>
+        <button class="nav-tab" onclick="switchTab('calc')" data-i18n="navCalc">🧮 Calculator</button>
+        <button class="nav-tab" onclick="switchTab('encoder')" data-i18n="navEncoder">🔀 Encoder</button>
+        <button class="nav-tab" onclick="switchTab('text')" data-i18n="navText">📝 Text</button>
+        <button class="nav-tab" onclick="switchTab('json')" data-i18n="navJSON">📋 JSON</button>
     </nav>
 
     <div class="container">
         <!-- PASSWORD GENERATOR -->
         <section id="password-section" class="section active">
             <div class="tool-card">
-                <h2 class="tool-title">🔐 Password Generator</h2>
-                <p class="tool-description">Create strong, secure passwords with custom options</p>
+                <h2 class="tool-title" data-i18n="pwTitle">🔐 Password Generator</h2>
+                <p class="tool-description" data-i18n="pwDesc">Create strong, secure passwords with custom options</p>
                 
                 <div class="input-group">
-                    <label class="input-label">Generated Password</label>
+                    <label class="input-label" data-i18n="pwResult">Generated Password</label>
                     <div class="password-result" id="passwordOutput">
-                        Click Generate
-                        <button class="copy-btn" onclick="copyPassword()">Copy</button>
+                        <span data-i18n="clickGenerate">Click Generate</span>
+                        <button class="copy-btn" onclick="copyPassword()" data-i18n="copy">Copy</button>
                     </div>
                 </div>
                 
                 <div class="input-group">
-                    <label class="input-label">Length: <span id="lengthVal">16</span></label>
+                    <label class="input-label"><span data-i18n="length">Length</span>: <span id="lengthVal">16</span></label>
                     <input type="range" class="input-field" id="pwLength" min="6" max="64" value="16" 
                            oninput="document.getElementById('lengthVal').textContent = this.value">
                 </div>
@@ -373,147 +444,56 @@
                 <div class="options-grid">
                     <label class="option-item">
                         <input type="checkbox" id="pwUpper" checked>
-                        <span>ABC</span>
+                        <span data-i18n="uppercase">ABC</span>
                     </label>
                     <label class="option-item">
                         <input type="checkbox" id="pwLower" checked>
-                        <span>abc</span>
+                        <span data-i18n="lowercase">abc</span>
                     </label>
                     <label class="option-item">
                         <input type="checkbox" id="pwNumbers" checked>
-                        <span>123</span>
+                        <span data-i18n="numbers">123</span>
                     </label>
                     <label class="option-item">
                         <input type="checkbox" id="pwSymbols" checked>
-                        <span>!@#</span>
+                        <span data-i18n="symbols">!@#</span>
                     </label>
                 </div>
                 
-                <button class="btn btn-primary" onclick="generatePassword()">🔄 Generate Password</button>
+                <button class="btn btn-primary" onclick="generatePassword()" data-i18n="generatePw">🔄 Generate Password</button>
             </div>
         </section>
 
-        <!-- QR CODE GENERATOR -->
+        <!-- QR CODE -->
         <section id="qr-section" class="section">
             <div class="tool-card">
-                <h2 class="tool-title">📱 QR Code Generator</h2>
-                <p class="tool-description">Generate QR codes for URLs, text, and more</p>
+                <h2 class="tool-title" data-i18n="qrTitle">📱 QR Code Generator</h2>
+                <p class="tool-description" data-i18n="qrDesc">Generate QR codes for URLs, text, and more</p>
                 
                 <div class="input-group">
-                    <label class="input-label">Content Type</label>
+                    <label class="input-label" data-i18n="contentType">Content Type</label>
                     <select class="select-field" id="qrType" onchange="updateQRInput()">
-                        <option value="url">🔗 URL / Website</option>
-                        <option value="text">📝 Text</option>
-                        <option value="wifi">📶 WiFi</option>
-                        <option value="email">📧 Email</option>
-                        <option value="phone">📞 Phone</option>
+                        <option value="url" data-i18n="typeURL">🔗 URL / Website</option>
+                        <option value="text" data-i18n="typeText">📝 Text</option>
+                        <option value="wifi" data-i18n="typeWiFi">📶 WiFi</option>
+                        <option value="email" data-i18n="typeEmail">📧 Email</option>
+                        <option value="phone" data-i18n="typePhone">📞 Phone</option>
                     </select>
                 </div>
                 
                 <div id="qrInputArea">
                     <div class="input-group">
-                        <label class="input-label">URL or Text</label>
+                        <label class="input-label" data-i18n="urlOrText">URL or Text</label>
                         <input type="text" class="input-field" id="qrContent" placeholder="https://example.com">
                     </div>
                 </div>
                 
-                <button class="btn btn-primary" onclick="generateQR()">⚡ Generate QR Code</button>
+                <button class="btn btn-primary" onclick="generateQR()" data-i18n="generateQR">⚡ Generate QR Code</button>
                 
                 <div class="result-box" id="qrResult" style="text-align:center">
                     <canvas id="qrCanvas" style="background:white;padding:20px;border-radius:12px"></canvas>
                     <br><br>
-                    <button class="btn btn-secondary" onclick="downloadQR()">📥 Download PNG</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- UNIT CONVERTER -->
-        <section id="converter-section" class="section">
-            <div class="tool-card">
-                <h2 class="tool-title">🔄 Unit Converter</h2>
-                <p class="tool-description">Convert between different units instantly</p>
-                
-                <div class="input-group">
-                    <label class="input-label">Category</label>
-                    <select class="select-field" id="convCategory" onchange="updateUnits()">
-                        <option value="length">📏 Length</option>
-                        <option value="weight">⚖️ Weight</option>
-                        <option value="volume">💧 Volume</option>
-                        <option value="area">📐 Area</option>
-                        <option value="temp">🌡️ Temperature</option>
-                        <option value="speed">🚀 Speed</option>
-                        <option value="time">⏱️ Time</option>
-                        <option value="data">💾 Digital Storage</option>
-                        <option value="pressure">💨 Pressure</option>
-                        <option value="energy">⚡ Energy</option>
-                    </select>
-                </div>
-                
-                <div class="converter-row">
-                    <div>
-                        <label class="input-label">From</label>
-                        <input type="number" class="input-field" id="convFromVal" value="1" oninput="convert()">
-                        <select class="select-field" id="convFromUnit" onchange="convert()" style="margin-top:8px">
-                            <option value="m">Meters</option>
-                            <option value="km">Kilometers</option>
-                            <option value="cm">Centimeters</option>
-                            <option value="ft">Feet</option>
-                            <option value="in">Inches</option>
-                        </select>
-                    </div>
-                    
-                    <button class="swap-btn" onclick="swapConv()">⇄</button>
-                    
-                    <div>
-                        <label class="input-label">To</label>
-                        <input type="number" class="input-field" id="convToVal" readonly>
-                        <select class="select-field" id="convToUnit" onchange="convert()" style="margin-top:8px">
-                            <option value="m">Meters</option>
-                            <option value="km" selected>Kilometers</option>
-                            <option value="cm">Centimeters</option>
-                            <option value="ft">Feet</option>
-                            <option value="in">Inches</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- TEXT TOOLS -->
-        <section id="text-section" class="section">
-            <div class="tool-card">
-                <h2 class="tool-title">📝 Text Tools</h2>
-                <p class="tool-description">Transform and analyze text</p>
-                
-                <div class="input-group">
-                    <textarea class="input-field" id="textInput" placeholder="Enter your text here..." oninput="analyzeText()"></textarea>
-                </div>
-                
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <div class="stat-value" id="statChars">0</div>
-                        <div class="stat-label">Chars</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value" id="statWords">0</div>
-                        <div class="stat-label">Words</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value" id="statLines">0</div>
-                        <div class="stat-label">Lines</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value" id="statSpaces">0</div>
-                        <div class="stat-label">Spaces</div>
-                    </div>
-                </div>
-                
-                <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:16px">
-                    <button class="btn btn-secondary" onclick="transformText('upper')">UPPER</button>
-                    <button class="btn btn-secondary" onclick="transformText('lower')">lower</button>
-                    <button class="btn btn-secondary" onclick="transformText('title')">Title Case</button>
-                    <button class="btn btn-secondary" onclick="transformText('reverse')">Reverse</button>
-                    <button class="btn btn-danger" onclick="clearText()">Clear</button>
+                    <button class="btn btn-secondary" onclick="downloadQR()" data-i18n="downloadPNG">📥 Download PNG</button>
                 </div>
             </div>
         </section>
@@ -521,11 +501,11 @@
         <!-- COLOR TOOLS -->
         <section id="color-section" class="section">
             <div class="tool-card">
-                <h2 class="tool-title">🎨 Color Picker & Converter</h2>
-                <p class="tool-description">Pick colors and convert between HEX, RGB, HSL formats</p>
+                <h2 class="tool-title" data-i18n="colorTitle">🎨 Color Picker & Converter</h2>
+                <p class="tool-description" data-i18n="colorDesc">Pick colors and convert between HEX, RGB, HSL formats</p>
                 
                 <div class="input-group">
-                    <label class="input-label">Pick Color</label>
+                    <label class="input-label" data-i18n="pickColor">Pick Color</label>
                     <div style="display:flex;gap:12px;align-items:center">
                         <input type="color" id="colorPicker" value="#3b82f6" onchange="updateColorFromPicker()" 
                                style="width:60px;height:50px;border:none;border-radius:8px;cursor:pointer">
@@ -543,29 +523,69 @@
                 </div>
                 
                 <div class="input-group">
-                    <label class="input-label">Preview</label>
+                    <label class="input-label" data-i18n="preview">Preview</label>
                     <div id="colorPreview" style="height:80px;border-radius:12px;background:#3b82f6;border:2px solid rgba(255,255,255,0.1)"></div>
                 </div>
                 
-                <button class="btn btn-secondary" onclick="copyColor()">📋 Copy HEX</button>
+                <button class="btn btn-secondary" onclick="copyColor()" data-i18n="copyHex">📋 Copy HEX</button>
+            </div>
+        </section>
+
+        <!-- CONVERTER -->
+        <section id="converter-section" class="section">
+            <div class="tool-card">
+                <h2 class="tool-title" data-i18n="convTitle">🔄 Unit Converter</h2>
+                <p class="tool-description" data-i18n="convDesc">Convert between different units instantly</p>
+                
+                <div class="input-group">
+                    <label class="input-label" data-i18n="category">Category</label>
+                    <select class="select-field" id="convCategory" onchange="updateUnits()">
+                        <option value="length" data-i18n="catLength">📏 Length</option>
+                        <option value="weight" data-i18n="catWeight">⚖️ Weight</option>
+                        <option value="volume" data-i18n="catVolume">💧 Volume</option>
+                        <option value="area" data-i18n="catArea">📐 Area</option>
+                        <option value="temp" data-i18n="catTemp">🌡️ Temperature</option>
+                        <option value="speed" data-i18n="catSpeed">🚀 Speed</option>
+                        <option value="time" data-i18n="catTime">⏱️ Time</option>
+                        <option value="data" data-i18n="catData">💾 Digital Storage</option>
+                        <option value="pressure" data-i18n="catPressure">💨 Pressure</option>
+                        <option value="energy" data-i18n="catEnergy">⚡ Energy</option>
+                    </select>
+                </div>
+                
+                <div class="converter-row">
+                    <div>
+                        <label class="input-label" data-i18n="from">From</label>
+                        <input type="number" class="input-field" id="convFromVal" value="1" oninput="convert()">
+                        <select class="select-field" id="convFromUnit" onchange="convert()" style="margin-top:8px"></select>
+                    </div>
+                    
+                    <button class="swap-btn" onclick="swapConv()">⇄</button>
+                    
+                    <div>
+                        <label class="input-label" data-i18n="to">To</label>
+                        <input type="number" class="input-field" id="convToVal" readonly>
+                        <select class="select-field" id="convToUnit" onchange="convert()" style="margin-top:8px"></select>
+                    </div>
+                </div>
             </div>
         </section>
 
         <!-- CALCULATOR -->
         <section id="calc-section" class="section">
             <div class="tool-card">
-                <h2 class="tool-title">🧮 Calculator</h2>
-                <p class="tool-description">Scientific calculator with percentage and basic operations</p>
+                <h2 class="tool-title" data-i18n="calcTitle">🧮 Calculator</h2>
+                <p class="tool-description" data-i18n="calcDesc">Scientific calculator with percentage and basic operations</p>
                 
                 <div class="input-group">
                     <input type="text" class="input-field" id="calcDisplay" readonly style="font-size:1.5rem;text-align:right;font-family:monospace">
                 </div>
                 
                 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
-                    <button class="btn btn-secondary" onclick="calcClear()">C</button>
-                    <button class="btn btn-secondary" onclick="calcInput('/')">/</button>
+                    <button class="btn btn-secondary" onclick="calcClear()" data-i18n="calcC">C</button>
+                    <button class="btn btn-secondary" onclick="calcInput('/')">÷</button>
                     <button class="btn btn-secondary" onclick="calcInput('*')">×</button>
-                    <button class="btn btn-secondary" onclick="calcBack()">←</button>
+                    <button class="btn btn-secondary" onclick="calcBack()" data-i18n="calcDel">←</button>
                     
                     <button class="btn btn-secondary" onclick="calcInput('7')">7</button>
                     <button class="btn btn-secondary" onclick="calcInput('8')">8</button>
@@ -580,7 +600,7 @@
                     <button class="btn btn-secondary" onclick="calcInput('1')">1</button>
                     <button class="btn btn-secondary" onclick="calcInput('2')">2</button>
                     <button class="btn btn-secondary" onclick="calcInput('3')">3</button>
-                    <button class="btn btn-primary" onclick="calcEqual()" style="grid-row:span 2">=</button>
+                    <button class="btn btn-primary" onclick="calcEqual()" style="grid-row:span 2" data-i18n="calcEq">=</button>
                     
                     <button class="btn btn-secondary" onclick="calcInput('0')" style="grid-column:span 2">0</button>
                     <button class="btn btn-secondary" onclick="calcInput('.')">.</button>
@@ -588,51 +608,90 @@
             </div>
         </section>
 
-        <!-- ENCODER TOOLS -->
+        <!-- ENCODER -->
         <section id="encoder-section" class="section">
             <div class="tool-card">
-                <h2 class="tool-title">🔀 Base64 & URL Encoder</h2>
-                <p class="tool-description">Encode and decode Base64, URL encode/decode</p>
+                <h2 class="tool-title" data-i18n="encTitle">🔀 Base64 & URL Encoder</h2>
+                <p class="tool-description" data-i18n="encDesc">Encode and decode Base64, URL encode/decode</p>
                 
                 <div class="input-group">
-                    <label class="input-label">Input</label>
+                    <label class="input-label" data-i18n="input">Input</label>
                     <textarea class="input-field" id="encoderInput" placeholder="Enter text to encode/decode..."></textarea>
                 </div>
                 
                 <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">
-                    <button class="btn btn-primary" onclick="base64Encode()">🔒 Base64 Encode</button>
-                    <button class="btn btn-secondary" onclick="base64Decode()">🔓 Base64 Decode</button>
-                    <button class="btn btn-secondary" onclick="urlEncode()">🔗 URL Encode</button>
-                    <button class="btn btn-secondary" onclick="urlDecode()">📎 URL Decode</button>
+                    <button class="btn btn-primary" onclick="base64Encode()" data-i18n="b64Enc">🔒 Base64 Encode</button>
+                    <button class="btn btn-secondary" onclick="base64Decode()" data-i18n="b64Dec">🔓 Base64 Decode</button>
+                    <button class="btn btn-secondary" onclick="urlEncode()" data-i18n="urlEnc">🔗 URL Encode</button>
+                    <button class="btn btn-secondary" onclick="urlDecode()" data-i18n="urlDec">📎 URL Decode</button>
                 </div>
                 
                 <div class="result-box" id="encoderResult" style="display:block">
-                    <div class="result-label">Result</div>
+                    <div class="result-label" data-i18n="result">Result</div>
                     <pre id="encoderOutput" style="white-space:pre-wrap;word-break:break-all;font-family:monospace"></pre>
-                    <button class="btn btn-secondary" onclick="copyEncoderResult()" style="margin-top:10px">📋 Copy</button>
+                    <button class="btn btn-secondary" onclick="copyEncoderResult()" style="margin-top:10px" data-i18n="copy">📋 Copy</button>
                 </div>
             </div>
         </section>
 
-        <!-- JSON TOOLS -->
+        <!-- TEXT TOOLS -->
+        <section id="text-section" class="section">
+            <div class="tool-card">
+                <h2 class="tool-title" data-i18n="textTitle">📝 Text Tools</h2>
+                <p class="tool-description" data-i18n="textDesc">Transform and analyze text</p>
+                
+                <div class="input-group">
+                    <textarea class="input-field" id="textInput" placeholder="Enter your text here..." oninput="analyzeText()"></textarea>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="statChars">0</div>
+                        <div class="stat-label" data-i18n="chars">Chars</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="statWords">0</div>
+                        <div class="stat-label" data-i18n="words">Words</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="statLines">0</div>
+                        <div class="stat-label" data-i18n="lines">Lines</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="statSpaces">0</div>
+                        <div class="stat-label" data-i18n="spaces">Spaces</div>
+                    </div>
+                </div>
+                
+                <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:16px">
+                    <button class="btn btn-secondary" onclick="transformText('upper')" data-i18n="upper">UPPER</button>
+                    <button class="btn btn-secondary" onclick="transformText('lower')" data-i18n="lower">lower</button>
+                    <button class="btn btn-secondary" onclick="transformText('title')" data-i18n="titleCase">Title Case</button>
+                    <button class="btn btn-secondary" onclick="transformText('reverse')" data-i18n="reverse">Reverse</button>
+                    <button class="btn btn-danger" onclick="clearText()" data-i18n="clear">Clear</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- JSON -->
         <section id="json-section" class="section">
             <div class="tool-card">
-                <h2 class="tool-title">📋 JSON Formatter</h2>
-                <p class="tool-description">Format, validate, and minify JSON</p>
+                <h2 class="tool-title" data-i18n="jsonTitle">📋 JSON Formatter</h2>
+                <p class="tool-description" data-i18n="jsonDesc">Format, validate, and minify JSON</p>
                 
                 <div class="input-group">
                     <textarea class="input-field" id="jsonInput" placeholder='{"example": "Paste JSON here"}' style="min-height:150px;font-family:monospace"></textarea>
                 </div>
                 
                 <div style="display:flex;flex-wrap:wrap;gap:8px">
-                    <button class="btn btn-primary" onclick="formatJSON(true)">✨ Format</button>
-                    <button class="btn btn-secondary" onclick="formatJSON(false)">🗜️ Minify</button>
-                    <button class="btn btn-secondary" onclick="validateJSON()">✓ Validate</button>
-                    <button class="btn btn-secondary" onclick="copyJSON()">📋 Copy Result</button>
+                    <button class="btn btn-primary" onclick="formatJSON(true)" data-i18n="format">✨ Format</button>
+                    <button class="btn btn-secondary" onclick="formatJSON(false)" data-i18n="minify">🗜️ Minify</button>
+                    <button class="btn btn-secondary" onclick="validateJSON()" data-i18n="validate">✓ Validate</button>
+                    <button class="btn btn-secondary" onclick="copyJSON()" data-i18n="copyResult">📋 Copy Result</button>
                 </div>
                 
                 <div class="result-box" id="jsonResult">
-                    <div class="result-label">Result</div>
+                    <div class="result-label" data-i18n="result">Result</div>
                     <pre id="jsonOutput" style="white-space:pre-wrap;word-break:break-all;font-family:monospace;font-size:0.9rem"></pre>
                 </div>
             </div>
@@ -641,11 +700,230 @@
 
     <div class="toast" id="toast">Copied! ✅</div>
 
-    <!-- QRCode.js Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
     <script>
-        // ===== TAB SWITCHING =====
+        // ==================== I18N ====================
+        const i18n = {
+            en: {
+                appName: '🧰 ToolBox Pro',
+                appDesc: 'Free Online Utility Tools - Fast, Secure, Easy',
+                navPassword: '🔐 Password', navQR: '📱 QR Code', navColor: '🎨 Color',
+                navConverter: '🔄 Converter', navCalc: '🧮 Calculator', navEncoder: '🔀 Encoder',
+                navText: '📝 Text', navJSON: '📋 JSON',
+                pwTitle: '🔐 Password Generator', pwDesc: 'Create strong, secure passwords with custom options',
+                pwResult: 'Generated Password', clickGenerate: 'Click Generate', copy: 'Copy',
+                length: 'Length', uppercase: 'ABC', lowercase: 'abc', numbers: '123', symbols: '!@#',
+                generatePw: '🔄 Generate Password',
+                qrTitle: '📱 QR Code Generator', qrDesc: 'Generate QR codes for URLs, text, and more',
+                contentType: 'Content Type', typeURL: '🔗 URL / Website', typeText: '📝 Text',
+                typeWiFi: '📶 WiFi', typeEmail: '📧 Email', typePhone: '📞 Phone',
+                urlOrText: 'URL or Text', generateQR: '⚡ Generate QR Code', downloadPNG: '📥 Download PNG',
+                colorTitle: '🎨 Color Picker & Converter', colorDesc: 'Pick colors and convert between HEX, RGB, HSL formats',
+                pickColor: 'Pick Color', preview: 'Preview', copyHex: '📋 Copy HEX',
+                convTitle: '🔄 Unit Converter', convDesc: 'Convert between different units instantly',
+                category: 'Category', catLength: '📏 Length', catWeight: '⚖️ Weight', catVolume: '💧 Volume',
+                catArea: '📐 Area', catTemp: '🌡️ Temperature', catSpeed: '🚀 Speed', catTime: '⏱️ Time',
+                catData: '💾 Digital Storage', catPressure: '💨 Pressure', catEnergy: '⚡ Energy',
+                from: 'From', to: 'To',
+                calcTitle: '🧮 Calculator', calcDesc: 'Scientific calculator with percentage and basic operations',
+                calcC: 'C', calcDel: '←', calcEq: '=',
+                encTitle: '🔀 Base64 & URL Encoder', encDesc: 'Encode and decode Base64, URL encode/decode',
+                input: 'Input', b64Enc: '🔒 Base64 Encode', b64Dec: '🔓 Base64 Decode',
+                urlEnc: '🔗 URL Encode', urlDec: '📎 URL Decode', result: 'Result',
+                textTitle: '📝 Text Tools', textDesc: 'Transform and analyze text',
+                chars: 'Chars', words: 'Words', lines: 'Lines', spaces: 'Spaces',
+                upper: 'UPPER', lower: 'lower', titleCase: 'Title Case', reverse: 'Reverse', clear: 'Clear',
+                jsonTitle: '📋 JSON Formatter', jsonDesc: 'Format, validate, and minify JSON',
+                format: '✨ Format', minify: '🗜️ Minify', validate: '✓ Validate', copyResult: '📋 Copy Result',
+                copied: 'Copied!', copiedPw: 'Password copied!', copiedColor: 'Color copied!',
+                enterContent: 'Please enter content', qrGenerated: 'QR Code generated!',
+                qrError: 'Error generating QR', downloaded: 'Downloaded!', selectOne: 'Select at least one option',
+                enterJSON: 'Enter JSON first', validJSON: '✅ Valid JSON!', invalidJSON: '❌ Invalid JSON',
+                formatFirst: 'Format JSON first'
+            },
+            zh: {
+                appName: '🧰 工具箱专业版', appDesc: '免费在线实用工具 - 快速、安全、易用',
+                navPassword: '🔐 密码', navQR: '📱 二维码', navColor: '🎨 颜色',
+                navConverter: '🔄 转换器', navCalc: '🧮 计算器', navEncoder: '🔀 编码器',
+                navText: '📝 文本', navJSON: '📋 JSON',
+                pwTitle: '🔐 密码生成器', pwDesc: '创建强密码，支持自定义选项',
+                pwResult: '生成的密码', clickGenerate: '点击生成', copy: '复制',
+                length: '长度', uppercase: '大写', lowercase: '小写', numbers: '数字', symbols: '符号',
+                generatePw: '🔄 生成密码',
+                qrTitle: '📱 二维码生成器', qrDesc: '生成网址、文本等二维码',
+                contentType: '内容类型', typeURL: '🔗 网址', typeText: '📝 文本',
+                typeWiFi: '📶 WiFi', typeEmail: '📧 邮箱', typePhone: '📞 电话',
+                urlOrText: '网址或文本', generateQR: '⚡ 生成二维码', downloadPNG: '📥 下载 PNG',
+                colorTitle: '🎨 颜色选择器', colorDesc: '选择颜色并在 HEX、RGB 格式间转换',
+                pickColor: '选择颜色', preview: '预览', copyHex: '📋 复制 HEX',
+                convTitle: '🔄 单位转换器', convDesc: '即时转换不同单位',
+                category: '类别', catLength: '📏 长度', catWeight: '⚖️ 重量', catVolume: '💧 体积',
+                catArea: '📐 面积', catTemp: '🌡️ 温度', catSpeed: '🚀 速度', catTime: '⏱️ 时间',
+                catData: '💾 存储', catPressure: '💨 压力', catEnergy: '⚡ 能量',
+                from: '从', to: '到',
+                calcTitle: '🧮 计算器', calcDesc: '科学计算器，支持百分比和基本运算',
+                calcC: '清除', calcDel: '删除', calcEq: '等于',
+                encTitle: '🔀 Base64 和 URL 编码', encDesc: 'Base64 编解码，URL 编解码',
+                input: '输入', b64Enc: '🔒 Base64 编码', b64Dec: '🔓 Base64 解码',
+                urlEnc: '🔗 URL 编码', urlDec: '📎 URL 解码', result: '结果',
+                textTitle: '📝 文本工具', textDesc: '转换和分析文本',
+                chars: '字符', words: '单词', lines: '行', spaces: '空格',
+                upper: '大写', lower: '小写', titleCase: '首字母大写', reverse: '反转', clear: '清空',
+                jsonTitle: '📋 JSON 格式化', jsonDesc: '格式化、验证和压缩 JSON',
+                format: '✨ 格式化', minify: '🗜️ 压缩', validate: '✓ 验证', copyResult: '📋 复制结果',
+                copied: '已复制!', copiedPw: '密码已复制!', copiedColor: '颜色已复制!',
+                enterContent: '请输入内容', qrGenerated: '二维码已生成!',
+                qrError: '生成二维码出错', downloaded: '已下载!', selectOne: '至少选择一个选项',
+                enterJSON: '先输入 JSON', validJSON: '✅ 有效的 JSON!', invalidJSON: '❌ 无效的 JSON',
+                formatFirst: '先格式化 JSON'
+            },
+            es: {
+                appName: '🧰 ToolBox Pro', appDesc: 'Herramientas gratuitas en línea - Rápido, Seguro, Fácil',
+                navPassword: '🔐 Contraseña', navQR: '📱 QR', navColor: '🎨 Color',
+                navConverter: '🔄 Convertidor', navCalc: '🧮 Calculadora', navEncoder: '🔀 Codificador',
+                navText: '📝 Texto', navJSON: '📋 JSON',
+                pwTitle: '🔐 Generador de Contraseñas', pwDesc: 'Crea contraseñas seguras con opciones personalizadas',
+                pwResult: 'Contraseña Generada', clickGenerate: 'Haz clic en Generar', copy: 'Copiar',
+                length: 'Longitud', uppercase: 'MAYÚS', lowercase: 'minús', numbers: 'Núm', symbols: 'Símb',
+                generatePw: '🔄 Generar Contraseña',
+                qrTitle: '📱 Generador de Código QR', qrDesc: 'Genera códigos QR para URLs, texto y más',
+                contentType: 'Tipo de Contenido', typeURL: '🔗 URL', typeText: '📝 Texto',
+                typeWiFi: '📶 WiFi', typeEmail: '📧 Email', typePhone: '📞 Teléfono',
+                urlOrText: 'URL o Texto', generateQR: '⚡ Generar QR', downloadPNG: '📥 Descargar PNG',
+                colorTitle: '🎨 Selector de Color', colorDesc: 'Selecciona colores y convierte entre HEX, RGB',
+                pickColor: 'Seleccionar Color', preview: 'Vista Previa', copyHex: '📋 Copiar HEX',
+                convTitle: '🔄 Convertidor de Unidades', convDesc: 'Convierte entre diferentes unidades al instante',
+                category: 'Categoría', catLength: '📏 Longitud', catWeight: '⚖️ Peso', catVolume: '💧 Volumen',
+                catArea: '📐 Área', catTemp: '🌡️ Temperatura', catSpeed: '🚀 Velocidad', catTime: '⏱️ Tiempo',
+                catData: '💾 Almacenamiento', catPressure: '💨 Presión', catEnergy: '⚡ Energía',
+                from: 'De', to: 'A',
+                calcTitle: '🧮 Calculadora', calcDesc: 'Calculadora científica con operaciones básicas',
+                calcC: 'C', calcDel: '←', calcEq: '=',
+                encTitle: '🔀 Codificador Base64 y URL', encDesc: 'Codifica y decodifica Base64, URL',
+                input: 'Entrada', b64Enc: '🔒 Codificar Base64', b64Dec: '🔓 Decodificar Base64',
+                urlEnc: '🔗 Codificar URL', urlDec: '📎 Decodificar URL', result: 'Resultado',
+                textTitle: '📝 Herramientas de Texto', textDesc: 'Transforma y analiza texto',
+                chars: 'Caracteres', words: 'Palabras', lines: 'Líneas', spaces: 'Espacios',
+                upper: 'MAYÚS', lower: 'minús', titleCase: 'Título', reverse: 'Reverso', clear: 'Limpiar',
+                jsonTitle: '📋 Formateador JSON', jsonDesc: 'Formatea, valida y minimiza JSON',
+                format: '✨ Formatear', minify: '🗜️ Minimizar', validate: '✓ Validar', copyResult: '📋 Copiar Resultado',
+                copied: '¡Copiado!', copiedPw: '¡Contraseña copiada!', copiedColor: '¡Color copiado!',
+                enterContent: 'Por favor ingresa contenido', qrGenerated: '¡Código QR generado!',
+                qrError: 'Error al generar QR', downloaded: '¡Descargado!', selectOne: 'Selecciona al menos una opción',
+                enterJSON: 'Ingresa JSON primero', validJSON: '✅ ¡JSON válido!', invalidJSON: '❌ JSON inválido',
+                formatFirst: 'Formatea JSON primero'
+            },
+            ja: {
+                appName: '🧰 ツールボックスプロ', appDesc: '無料オンラインユーティリティツール - 高速、安全、簡単',
+                navPassword: '🔐 パスワード', navQR: '📱 QRコード', navColor: '🎨 カラー',
+                navConverter: '🔄 変換', navCalc: '🧮 電卓', navEncoder: '🔀 エンコーダ',
+                navText: '📝 テキスト', navJSON: '📋 JSON',
+                pwTitle: '🔐 パスワード生成', pwDesc: 'カスタムオプションで強力なパスワードを作成',
+                pwResult: '生成されたパスワード', clickGenerate: 'クリックして生成', copy: 'コピー',
+                length: '長さ', uppercase: '大文字', lowercase: '小文字', numbers: '数字', symbols: '記号',
+                generatePw: '🔄 パスワード生成',
+                qrTitle: '📱 QRコード生成', qrDesc: 'URL、テキストなどのQRコードを生成',
+                contentType: 'コンテンツタイプ', typeURL: '🔗 URL', typeText: '📝 テキスト',
+                typeWiFi: '📶 WiFi', typeEmail: '📧 メール', typePhone: '📞 電話',
+                urlOrText: 'URLまたはテキスト', generateQR: '⚡ QRコード生成', downloadPNG: '📥 PNGダウンロード',
+                colorTitle: '🎨 カラーピッカー', colorDesc: '色を選択し、HEX、RGB間で変換',
+                pickColor: '色を選択', preview: 'プレビュー', copyHex: '📋 HEXコピー',
+                convTitle: '🔄 単位変換', convDesc: '異なる単位間を即座に変換',
+                category: 'カテゴリ', catLength: '📏 長さ', catWeight: '⚖️ 重さ', catVolume: '💧 容積',
+                catArea: '📐 面積', catTemp: '🌡️ 温度', catSpeed: '🚀 速度', catTime: '⏱️ 時間',
+                catData: '💾 ストレージ', catPressure: '💨 圧力', catEnergy: '⚡ エネルギー',
+                from: 'から', to: 'へ',
+                calcTitle: '🧮 電卓', calcDesc: '基本演算とパーセント対応の科学電卓',
+                calcC: 'C', calcDel: '←', calcEq: '=',
+                encTitle: '🔀 Base64 & URL エンコーダ', encDesc: 'Base64、URLのエンコードとデコード',
+                input: '入力', b64Enc: '🔒 Base64エンコード', b64Dec: '🔓 Base64デコード',
+                urlEnc: '🔗 URLエンコード', urlDec: '📎 URLデコード', result: '結果',
+                textTitle: '📝 テキストツール', textDesc: 'テキストを変換・分析',
+                chars: '文字数', words: '単語数', lines: '行数', spaces: '空白',
+                upper: '大文字', lower: '小文字', titleCase: 'タイトル', reverse: '反転', clear: 'クリア',
+                jsonTitle: '📋 JSONフォーマッタ', jsonDesc: 'JSONをフォーマット、検証、圧縮',
+                format: '✨ フォーマット', minify: '🗜️ 圧縮', validate: '✓ 検証', copyResult: '📋 結果コピー',
+                copied: 'コピー完了!', copiedPw: 'パスワードをコピーしました!', copiedColor: '色をコピーしました!',
+                enterContent: '内容を入力してください', qrGenerated: 'QRコードを生成しました!',
+                qrError: 'QRコード生成エラー', downloaded: 'ダウンロード完了!', selectOne: '1つ以上選択してください',
+                enterJSON: 'JSONを入力してください', validJSON: '✅ 有効なJSON!', invalidJSON: '❌ 無効なJSON',
+                formatFirst: '先にJSONをフォーマットしてください'
+            },
+            ko: {
+                appName: '🧰 툴박스 프로', appDesc: '무료 온라인 유틸리티 도구 - 빠르고, 안전하고, 쉬운',
+                navPassword: '🔐 비밀번호', navQR: '📱 QR코드', navColor: '🎨 색상',
+                navConverter: '🔄 변환기', navCalc: '🧮 계산기', navEncoder: '🔀 인코더',
+                navText: '📝 텍스트', navJSON: '📋 JSON',
+                pwTitle: '🔐 비밀번호 생성기', pwDesc: '사용자 지정 옵션으로 강력한 비밀번호 생성',
+                pwResult: '생성된 비밀번호', clickGenerate: '생성 클릭', copy: '복사',
+                length: '길이', uppercase: '대문자', lowercase: '소문자', numbers: '숫자', symbols: '기호',
+                generatePw: '🔄 비밀번호 생성',
+                qrTitle: '📱 QR코드 생성기', qrDesc: 'URL, 텍스트 등의 QR코드 생성',
+                contentType: '콘텐츠 유형', typeURL: '🔗 URL', typeText: '📝 텍스트',
+                typeWiFi: '📶 WiFi', typeEmail: '📧 이메일', typePhone: '📞 전화',
+                urlOrText: 'URL 또는 텍스트', generateQR: '⚡ QR코드 생성', downloadPNG: '📥 PNG 다운로드',
+                colorTitle: '🎨 색상 선택기', colorDesc: '색상을 선택하고 HEX, RGB 간 변환',
+                pickColor: '색상 선택', preview: '미리보기', copyHex: '📋 HEX 복사',
+                convTitle: '🔄 단위 변환기', convDesc: '다양한 단위 간 즉시 변환',
+                category: '카테고리', catLength: '📏 길이', catWeight: '⚖️ 무게', catVolume: '💧 부피',
+                catArea: '📐 면적', catTemp: '🌡️ 온도', catSpeed: '🚀 속도', catTime: '⏱️ 시간',
+                catData: '💾 저장소', catPressure: '💨 압력', catEnergy: '⚡ 에너지',
+                from: '에서', to: '로',
+                calcTitle: '🧮 계산기', calcDesc: '기본 연산과 백분율을 지원하는 과학 계산기',
+                calcC: 'C', calcDel: '←', calcEq: '=',
+                encTitle: '🔀 Base64 및 URL 인코더', encDesc: 'Base64, URL 인코딩 및 디코딩',
+                input: '입력', b64Enc: '🔒 Base64 인코딩', b64Dec: '🔓 Base64 디코딩',
+                urlEnc: '🔗 URL 인코딩', urlDec: '📎 URL 디코딩', result: '결과',
+                textTitle: '📝 텍스트 도구', textDesc: '텍스트 변환 및 분석',
+                chars: '문자', words: '단어', lines: '줄', spaces: '공백',
+                upper: '대문자', lower: '소문자', titleCase: '제목', reverse: '반전', clear: '지우기',
+                jsonTitle: '📋 JSON 포맷터', jsonDesc: 'JSON 포맷, 검증 및 축소',
+                format: '✨ 포맷', minify: '🗜️ 축소', validate: '✓ 검증', copyResult: '📋 결과 복사',
+                copied: '복사됨!', copiedPw: '비밀번호 복사됨!', copiedColor: '색상 복사됨!',
+                enterContent: '내용을 입력하세요', qrGenerated: 'QR코드 생성됨!',
+                qrError: 'QR코드 생성 오류', downloaded: '다운로드됨!', selectOne: '하나 이상 선택하세요',
+                enterJSON: 'JSON을 먼저 입력하세요', validJSON: '✅ 유효한 JSON!', invalidJSON: '❌ 유효하지 않은 JSON',
+                formatFirst: 'JSON을 먼저 포맷하세요'
+            }
+        };
+
+        let currentLang = localStorage.getItem('lang') || 'en';
+
+        function setLang(lang) {
+            currentLang = lang;
+            localStorage.setItem('lang', lang);
+            document.documentElement.lang = lang;
+            
+            const flags = {en: '🇺🇸', zh: '🇨🇳', es: '🇪🇸', ja: '🇯🇵', ko: '🇰🇷'};
+            const names = {en: 'English', zh: '中文', es: 'Español', ja: '日本語', ko: '한국어'};
+            
+            document.getElementById('current-lang-flag').textContent = flags[lang];
+            document.getElementById('current-lang-name').textContent = names[lang];
+            
+            updateUI();
+            document.getElementById('langDropdown').classList.remove('show');
+        }
+
+        function updateUI() {
+            const t = i18n[currentLang];
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (t[key]) el.textContent = t[key];
+            });
+            document.title = t.appName;
+        }
+
+        function toggleLang() {
+            document.getElementById('langDropdown').classList.toggle('show');
+        }
+
+        document.addEventListener('click', e => {
+            if (!e.target.closest('.lang-selector')) {
+                document.getElementById('langDropdown').classList.remove('show');
+            }
+        });
+
+        // ==================== TAB SWITCHING ====================
         function switchTab(tab) {
             document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -653,7 +931,7 @@
             document.getElementById(tab + '-section').classList.add('active');
         }
 
-        // ===== TOAST =====
+        // ==================== TOAST ====================
         function showToast(msg) {
             const t = document.getElementById('toast');
             t.textContent = msg;
@@ -661,7 +939,7 @@
             setTimeout(() => t.classList.remove('show'), 2000);
         }
 
-        // ===== PASSWORD GENERATOR =====
+        // ==================== PASSWORD ====================
         function generatePassword() {
             const len = parseInt(document.getElementById('pwLength').value);
             const upper = document.getElementById('pwUpper').checked;
@@ -673,63 +951,39 @@
             if (upper) chars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
             if (lower) chars += 'abcdefghijklmnopqrstuvwxyz';
             if (nums) chars += '0123456789';
-            if (syms) chars += '!@#$%^&*()_+-=[]{}|;:,.<>?';
+            if (syms) chars += '!@#$%^&*()_+-=[]{}|;:,.<>';
 
             if (!chars) {
-                showToast('Select at least one option');
+                showToast(i18n[currentLang].selectOne);
                 return;
             }
 
             let pw = '';
             const arr = new Uint32Array(len);
             crypto.getRandomValues(arr);
-            for (let i = 0; i < len; i++) {
-                pw += chars[arr[i] % chars.length];
-            }
+            for (let i = 0; i < len; i++) pw += chars[arr[i] % chars.length];
 
             document.getElementById('passwordOutput').innerHTML = 
-                pw + '<button class="copy-btn" onclick="copyPassword()">Copy</button>';
+                pw + `<button class="copy-btn" onclick="copyPassword()">${i18n[currentLang].copy}</button>`;
         }
 
         function copyPassword() {
-            const pw = document.getElementById('passwordOutput').textContent.replace('Copy', '').trim();
-            navigator.clipboard.writeText(pw).then(() => showToast('Password copied!'));
+            const pw = document.getElementById('passwordOutput').textContent.replace(i18n[currentLang].copy, '').trim();
+            navigator.clipboard.writeText(pw).then(() => showToast(i18n[currentLang].copiedPw));
         }
 
-        // ===== QR CODE GENERATOR =====
+        // ==================== QR CODE ====================
         function updateQRInput() {
             const type = document.getElementById('qrType').value;
             const area = document.getElementById('qrInputArea');
+            const t = i18n[currentLang];
             
             const inputs = {
-                url: `<div class="input-group">
-                    <label class="input-label">URL</label>
-                    <input type="text" class="input-field" id="qrContent" placeholder="https://example.com">
-                </div>`,
-                text: `<div class="input-group">
-                    <label class="input-label">Text</label>
-                    <textarea class="input-field" id="qrContent" placeholder="Enter your text..."></textarea>
-                </div>`,
-                wifi: `<div class="input-group">
-                    <label class="input-label">Network Name (SSID)</label>
-                    <input type="text" class="input-field" id="qrWifiSSID" placeholder="WiFi Name">
-                </div>
-                <div class="input-group">
-                    <label class="input-label">Password</label>
-                    <input type="text" class="input-field" id="qrWifiPass" placeholder="Password">
-                </div>`,
-                email: `<div class="input-group">
-                    <label class="input-label">Email</label>
-                    <input type="email" class="input-field" id="qrEmail" placeholder="name@example.com">
-                </div>
-                <div class="input-group">
-                    <label class="input-label">Subject</label>
-                    <input type="text" class="input-field" id="qrSubject" placeholder="Subject">
-                </div>`,
-                phone: `<div class="input-group">
-                    <label class="input-label">Phone Number</label>
-                    <input type="tel" class="input-field" id="qrPhone" placeholder="+1 234 567 8900">
-                </div>`
+                url: `<div class="input-group"><label class="input-label">${t.urlOrText}</label><input type="text" class="input-field" id="qrContent" placeholder="https://example.com"></div>`,
+                text: `<div class="input-group"><label class="input-label">${t.typeText}</label><textarea class="input-field" id="qrContent" placeholder="Enter text..."></textarea></div>`,
+                wifi: `<div class="input-group"><label class="input-label">WiFi SSID</label><input type="text" class="input-field" id="qrWifiSSID" placeholder="Network Name"></div><div class="input-group"><label class="input-label">Password</label><input type="text" class="input-field" id="qrWifiPass" placeholder="Password"></div>`,
+                email: `<div class="input-group"><label class="input-label">Email</label><input type="email" class="input-field" id="qrEmail" placeholder="name@example.com"></div><div class="input-group"><label class="input-label">Subject</label><input type="text" class="input-field" id="qrSubject" placeholder="Subject"></div>`,
+                phone: `<div class="input-group"><label class="input-label">${t.typePhone}</label><input type="tel" class="input-field" id="qrPhone" placeholder="+1 234 567 8900"></div>`
             };
             
             area.innerHTML = inputs[type] || inputs.url;
@@ -737,54 +991,41 @@
 
         function getQRContent() {
             const type = document.getElementById('qrType').value;
-            
             switch(type) {
                 case 'url':
                 case 'text':
                     return document.getElementById('qrContent')?.value || '';
                 case 'wifi':
-                    const ssid = document.getElementById('qrWifiSSID')?.value || '';
-                    const pass = document.getElementById('qrWifiPass')?.value || '';
-                    return `WIFI:T:WPA;S:${ssid};P:${pass};;`;
+                    return `WIFI:T:WPA;S:${document.getElementById('qrWifiSSID')?.value || ''};P:${document.getElementById('qrWifiPass')?.value || ''};;`;
                 case 'email':
-                    const email = document.getElementById('qrEmail')?.value || '';
-                    const subject = document.getElementById('qrSubject')?.value || '';
-                    return `mailto:${email}?subject=${encodeURIComponent(subject)}`;
+                    return `mailto:${document.getElementById('qrEmail')?.value || ''}?subject=${encodeURIComponent(document.getElementById('qrSubject')?.value || '')}`;
                 case 'phone':
                     return `tel:${document.getElementById('qrPhone')?.value || ''}`;
-                default:
-                    return '';
+                default: return '';
             }
         }
 
         function generateQR() {
             const content = getQRContent();
             if (!content) {
-                showToast('Please enter content');
+                showToast(i18n[currentLang].enterContent);
                 return;
             }
 
             const canvas = document.getElementById('qrCanvas');
-            const result = document.getElementById('qrResult');
-            
-            // Clear previous
             const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Generate new QR
             try {
                 new QRCode(canvas, {
-                    text: content,
-                    width: 256,
-                    height: 256,
-                    colorDark: '#000000',
-                    colorLight: '#ffffff',
+                    text: content, width: 256, height: 256,
+                    colorDark: '#000000', colorLight: '#ffffff',
                     correctLevel: QRCode.CorrectLevel.H
                 });
-                result.classList.add('show');
-                showToast('QR Code generated!');
+                document.getElementById('qrResult').classList.add('show');
+                showToast(i18n[currentLang].qrGenerated);
             } catch(e) {
-                showToast('Error generating QR');
+                showToast(i18n[currentLang].qrError);
             }
         }
 
@@ -794,202 +1035,10 @@
             link.download = 'qrcode.png';
             link.href = canvas.toDataURL('image/png');
             link.click();
-            showToast('Downloaded!');
+            showToast(i18n[currentLang].downloaded);
         }
 
-        // ===== UNIT CONVERTER =====
-        const unitData = {
-            length: {
-                m: 1, km: 1000, cm: 0.01, mm: 0.001, um: 0.000001, nm: 1e-9,
-                ft: 0.3048, in: 0.0254, yd: 0.9144, mi: 1609.34, nmi: 1852
-            },
-            weight: {
-                kg: 1, g: 0.001, mg: 0.000001, mcg: 1e-9,
-                lb: 0.453592, oz: 0.0283495, st: 6.35029, ton: 1016.05
-            },
-            volume: {
-                l: 1, ml: 0.001, gal: 3.78541, qt: 0.946353, pt: 0.473176,
-                cup: 0.236588, floz: 0.0295735, tbsp: 0.0147868, tsp: 0.00492892
-            },
-            area: {
-                sqm: 1, sqkm: 1e6, sqft: 0.092903, sqin: 0.00064516,
-                acre: 4046.86, ha: 10000
-            },
-            speed: {
-                mps: 1, kph: 0.277778, mph: 0.44704, knot: 0.514444, mach: 343
-            },
-            time: {
-                s: 1, min: 60, h: 3600, d: 86400, wk: 604800,
-                mo: 2.628e6, y: 3.154e7
-            },
-            data: {
-                b: 1, B: 8, KB: 8192, MB: 8.389e6, GB: 8.59e9, TB: 8.796e12
-            },
-            pressure: {
-                pa: 1, kpa: 1000, bar: 100000, atm: 101325, psi: 6894.76, mmHg: 133.322
-            },
-            energy: {
-                j: 1, kj: 1000, cal: 4.184, kcal: 4184, wh: 3600, kwh: 3.6e6
-            },
-            temp: {} // handled separately
-        };
-
-        const unitNames = {
-            length: { m: 'Meters', km: 'Kilometers', cm: 'Centimeters', mm: 'Millimeters', 
-                     um: 'Micrometers', nm: 'Nanometers', ft: 'Feet', in: 'Inches', 
-                     yd: 'Yards', mi: 'Miles', nmi: 'Nautical Miles' },
-            weight: { kg: 'Kilograms', g: 'Grams', mg: 'Milligrams', mcg: 'Micrograms',
-                     lb: 'Pounds', oz: 'Ounces', st: 'Stone', ton: 'Tons' },
-            volume: { l: 'Liters', ml: 'Milliliters', gal: 'Gallons (US)', qt: 'Quarts (US)',
-                     pt: 'Pints (US)', cup: 'Cups (US)', floz: 'Fluid Ounces', 
-                     tbsp: 'Tablespoons', tsp: 'Teaspoons' },
-            area: { sqm: 'Square Meters', sqkm: 'Square Kilometers', sqft: 'Square Feet',
-                   sqin: 'Square Inches', acre: 'Acres', ha: 'Hectares' },
-            speed: { mps: 'Meters/Second', kph: 'Kilometers/Hour', mph: 'Miles/Hour',
-                    knot: 'Knots', mach: 'Mach' },
-            time: { s: 'Seconds', min: 'Minutes', h: 'Hours', d: 'Days',
-                   wk: 'Weeks', mo: 'Months', y: 'Years' },
-            data: { b: 'Bits', B: 'Bytes', KB: 'Kilobytes', MB: 'Megabytes',
-                   GB: 'Gigabytes', TB: 'Terabytes' },
-            pressure: { pa: 'Pascals', kpa: 'Kilopascals', bar: 'Bar', atm: 'Atmospheres',
-                       psi: 'PSI', mmHg: 'mmHg' },
-            energy: { j: 'Joules', kj: 'Kilojoules', cal: 'Calories', kcal: 'Kilocalories',
-                     wh: 'Watt-hours', kwh: 'Kilowatt-hours' },
-            temp: { C: 'Celsius', F: 'Fahrenheit', K: 'Kelvin' }
-        };
-
-        function updateUnits() {
-            const cat = document.getElementById('convCategory').value;
-            const fromSel = document.getElementById('convFromUnit');
-            const toSel = document.getElementById('convToUnit');
-            
-            fromSel.innerHTML = '';
-            toSel.innerHTML = '';
-            
-            const units = unitNames[cat];
-            Object.entries(units).forEach(([key, name]) => {
-                fromSel.add(new Option(name, key));
-                toSel.add(new Option(name, key));
-            });
-            
-            if (toSel.options.length > 1) toSel.selectedIndex = 1;
-            convert();
-        }
-
-        function convert() {
-            const cat = document.getElementById('convCategory').value;
-            const from = document.getElementById('convFromUnit').value;
-            const to = document.getElementById('convToUnit').value;
-            const val = parseFloat(document.getElementById('convFromVal').value) || 0;
-            
-            let result;
-            
-            if (cat === 'temp') {
-                // Temperature conversion
-                let c = val;
-                if (from === 'F') c = (val - 32) * 5/9;
-                else if (from === 'K') c = val - 273.15;
-                
-                if (to === 'C') result = c;
-                else if (to === 'F') result = c * 9/5 + 32;
-                else result = c + 273.15;
-            } else {
-                // Other conversions
-                const fromFactor = unitData[cat][from];
-                const toFactor = unitData[cat][to];
-                result = (val * fromFactor) / toFactor;
-            }
-            
-            document.getElementById('convToVal').value = parseFloat(result.toFixed(6));
-        }
-
-        function swapConv() {
-            const from = document.getElementById('convFromUnit');
-            const to = document.getElementById('convToUnit');
-            const temp = from.selectedIndex;
-            from.selectedIndex = to.selectedIndex;
-            to.selectedIndex = temp;
-            convert();
-        }
-
-        // ===== TEXT TOOLS =====
-        function analyzeText() {
-            const text = document.getElementById('textInput').value;
-            document.getElementById('statChars').textContent = text.length;
-            document.getElementById('statWords').textContent = text.trim() ? text.trim().split(/\s+/).length : 0;
-            document.getElementById('statLines').textContent = text.split('\n').length;
-            document.getElementById('statSpaces').textContent = (text.match(/\s/g) || []).length;
-        }
-
-        function transformText(type) {
-            const input = document.getElementById('textInput');
-            const text = input.value;
-            
-            const transforms = {
-                upper: () => text.toUpperCase(),
-                lower: () => text.toLowerCase(),
-                title: () => text.toLowerCase().replace(/\b\w/g, c => c.toUpperCase()),
-                reverse: () => text.split('').reverse().join('')
-            };
-            
-            if (transforms[type]) {
-                input.value = transforms[type]();
-                analyzeText();
-            }
-        }
-
-        function clearText() {
-            document.getElementById('textInput').value = '';
-            analyzeText();
-        }
-
-        // ===== JSON TOOLS =====
-        function formatJSON(pretty) {
-            const input = document.getElementById('jsonInput').value.trim();
-            const resultBox = document.getElementById('jsonResult');
-            const output = document.getElementById('jsonOutput');
-            
-            if (!input) {
-                showToast('Enter JSON first');
-                return;
-            }
-            
-            try {
-                const parsed = JSON.parse(input);
-                output.textContent = JSON.stringify(parsed, null, pretty ? 2 : 0);
-                output.style.color = 'var(--text-primary)';
-                resultBox.classList.add('show');
-            } catch (e) {
-                output.textContent = 'Error: ' + e.message;
-                output.style.color = 'var(--danger)';
-                resultBox.classList.add('show');
-            }
-        }
-
-        function validateJSON() {
-            const input = document.getElementById('jsonInput').value.trim();
-            if (!input) {
-                showToast('Enter JSON first');
-                return;
-            }
-            try {
-                JSON.parse(input);
-                showToast('✅ Valid JSON!');
-            } catch (e) {
-                showToast('❌ Invalid: ' + e.message);
-            }
-        }
-
-        function copyJSON() {
-            const output = document.getElementById('jsonOutput').textContent;
-            if (!output || output.startsWith('Error')) {
-                showToast('Format JSON first');
-                return;
-            }
-            navigator.clipboard.writeText(output).then(() => showToast('Copied!'));
-        }
-
-        // ===== COLOR TOOLS =====
+        // ==================== COLOR ====================
         function updateColorFromPicker() {
             const color = document.getElementById('colorPicker').value;
             document.getElementById('colorHex').value = color;
@@ -1011,118 +1060,237 @@
             const r = parseInt(document.getElementById('colorR').value) || 0;
             const g = parseInt(document.getElementById('colorG').value) || 0;
             const b = parseInt(document.getElementById('colorB').value) || 0;
-            const hex = rgbToHex(r, g, b);
+            const hex = '#' + [r,g,b].map(x => {
+                const h = Math.max(0, Math.min(255, x)).toString(16);
+                return h.length === 1 ? '0' + h : h;
+            }).join('');
             document.getElementById('colorPicker').value = hex;
             document.getElementById('colorHex').value = hex;
             updateColorPreview();
         }
 
         function updateColorPreview() {
-            const color = document.getElementById('colorPicker').value;
-            document.getElementById('colorPreview').style.background = color;
+            document.getElementById('colorPreview').style.background = document.getElementById('colorPicker').value;
         }
 
         function hexToRgb(hex) {
-            const r = parseInt(hex.slice(1, 3), 16);
-            const g = parseInt(hex.slice(3, 5), 16);
-            const b = parseInt(hex.slice(5, 7), 16);
-            document.getElementById('colorR').value = r;
-            document.getElementById('colorG').value = g;
-            document.getElementById('colorB').value = b;
-        }
-
-        function rgbToHex(r, g, b) {
-            return '#' + [r, g, b].map(x => {
-                const hex = Math.max(0, Math.min(255, x)).toString(16);
-                return hex.length === 1 ? '0' + hex : hex;
-            }).join('');
+            document.getElementById('colorR').value = parseInt(hex.slice(1, 3), 16);
+            document.getElementById('colorG').value = parseInt(hex.slice(3, 5), 16);
+            document.getElementById('colorB').value = parseInt(hex.slice(5, 7), 16);
         }
 
         function copyColor() {
-            const hex = document.getElementById('colorHex').value;
-            navigator.clipboard.writeText(hex).then(() => showToast('Color copied!'));
+            navigator.clipboard.writeText(document.getElementById('colorHex').value)
+                .then(() => showToast(i18n[currentLang].copiedColor));
         }
 
-        // ===== CALCULATOR =====
-        let calcExpression = '';
+        // ==================== CONVERTER ====================
+        const unitData = {
+            length: { m: 1, km: 1000, cm: 0.01, mm: 0.001, ft: 0.3048, in: 0.0254, mi: 1609.34 },
+            weight: { kg: 1, g: 0.001, lb: 0.453592, oz: 0.0283495 },
+            temp: {}
+        };
 
-        function calcInput(val) {
-            calcExpression += val;
-            document.getElementById('calcDisplay').value = calcExpression;
+        const unitNames = {
+            length: { m: 'Meters', km: 'Kilometers', cm: 'Centimeters', mm: 'Millimeters', ft: 'Feet', in: 'Inches', mi: 'Miles' },
+            weight: { kg: 'Kilograms', g: 'Grams', lb: 'Pounds', oz: 'Ounces' },
+            temp: { C: 'Celsius', F: 'Fahrenheit', K: 'Kelvin' }
+        };
+
+        function updateUnits() {
+            const cat = document.getElementById('convCategory').value;
+            const fromSel = document.getElementById('convFromUnit');
+            const toSel = document.getElementById('convToUnit');
+            
+            fromSel.innerHTML = '';
+            toSel.innerHTML = '';
+            
+            Object.entries(unitNames[cat] || unitNames.length).forEach(([key, name]) => {
+                fromSel.add(new Option(name, key));
+                toSel.add(new Option(name, key));
+            });
+            
+            if (toSel.options.length > 1) toSel.selectedIndex = 1;
+            convert();
+        }
+
+        function convert() {
+            const cat = document.getElementById('convCategory').value;
+            const from = document.getElementById('convFromUnit').value;
+            const to = document.getElementById('convToUnit').value;
+            const val = parseFloat(document.getElementById('convFromVal').value) || 0;
+            
+            let result;
+            
+            if (cat === 'temp') {
+                let c = val;
+                if (from === 'F') c = (val - 32) * 5/9;
+                else if (from === 'K') c = val - 273.15;
+                
+                if (to === 'C') result = c;
+                else if (to === 'F') result = c * 9/5 + 32;
+                else result = c + 273.15;
+            } else {
+                const data = unitData[cat] || unitData.length;
+                result = (val * data[from]) / data[to];
+            }
+            
+            document.getElementById('convToVal').value = parseFloat(result.toFixed(6));
+        }
+
+        function swapConv() {
+            const f = document.getElementById('convFromUnit');
+            const t = document.getElementById('convToUnit');
+            const tmp = f.selectedIndex;
+            f.selectedIndex = t.selectedIndex;
+            t.selectedIndex = tmp;
+            convert();
+        }
+
+        // ==================== CALCULATOR ====================
+        let calcExpr = '';
+
+        function calcInput(v) {
+            calcExpr += v;
+            document.getElementById('calcDisplay').value = calcExpr;
         }
 
         function calcClear() {
-            calcExpression = '';
+            calcExpr = '';
             document.getElementById('calcDisplay').value = '';
         }
 
         function calcBack() {
-            calcExpression = calcExpression.slice(0, -1);
-            document.getElementById('calcDisplay').value = calcExpression;
+            calcExpr = calcExpr.slice(0, -1);
+            document.getElementById('calcDisplay').value = calcExpr;
         }
 
         function calcEqual() {
             try {
-                const result = eval(calcExpression);
-                calcExpression = String(result);
-                document.getElementById('calcDisplay').value = calcExpression;
-            } catch (e) {
+                calcExpr = String(eval(calcExpr) || '');
+                document.getElementById('calcDisplay').value = calcExpr;
+            } catch {
                 document.getElementById('calcDisplay').value = 'Error';
-                calcExpression = '';
+                calcExpr = '';
             }
         }
 
-        // ===== ENCODER TOOLS =====
+        // ==================== ENCODER ====================
         function base64Encode() {
             const input = document.getElementById('encoderInput').value;
             try {
-                const encoded = btoa(unescape(encodeURIComponent(input)));
-                document.getElementById('encoderOutput').textContent = encoded;
-                showToast('Base64 encoded!');
-            } catch (e) {
-                showToast('Error encoding');
+                document.getElementById('encoderOutput').textContent = btoa(unescape(encodeURIComponent(input)));
+            } catch {
+                showToast('Error');
             }
         }
 
         function base64Decode() {
             const input = document.getElementById('encoderInput').value;
             try {
-                const decoded = decodeURIComponent(escape(atob(input)));
-                document.getElementById('encoderOutput').textContent = decoded;
-                showToast('Base64 decoded!');
-            } catch (e) {
+                document.getElementById('encoderOutput').textContent = decodeURIComponent(escape(atob(input)));
+            } catch {
                 showToast('Invalid Base64');
             }
         }
 
         function urlEncode() {
-            const input = document.getElementById('encoderInput').value;
-            const encoded = encodeURIComponent(input);
-            document.getElementById('encoderOutput').textContent = encoded;
-            showToast('URL encoded!');
+            document.getElementById('encoderOutput').textContent = encodeURIComponent(document.getElementById('encoderInput').value);
         }
 
         function urlDecode() {
-            const input = document.getElementById('encoderInput').value;
             try {
-                const decoded = decodeURIComponent(input);
-                document.getElementById('encoderOutput').textContent = decoded;
-                showToast('URL decoded!');
-            } catch (e) {
-                showToast('Invalid URL encoding');
+                document.getElementById('encoderOutput').textContent = decodeURIComponent(document.getElementById('encoderInput').value);
+            } catch {
+                showToast('Invalid URL');
             }
         }
 
         function copyEncoderResult() {
-            const output = document.getElementById('encoderOutput').textContent;
-            if (output) {
-                navigator.clipboard.writeText(output).then(() => showToast('Copied!'));
+            const out = document.getElementById('encoderOutput').textContent;
+            if (out) navigator.clipboard.writeText(out).then(() => showToast(i18n[currentLang].copied));
+        }
+
+        // ==================== TEXT ====================
+        function analyzeText() {
+            const text = document.getElementById('textInput').value;
+            document.getElementById('statChars').textContent = text.length;
+            document.getElementById('statWords').textContent = text.trim() ? text.trim().split(/\s+/).length : 0;
+            document.getElementById('statLines').textContent = text.split('\n').length;
+            document.getElementById('statSpaces').textContent = (text.match(/\s/g) || []).length;
+        }
+
+        function transformText(type) {
+            const input = document.getElementById('textInput');
+            const text = input.value;
+            const transforms = {
+                upper: () => text.toUpperCase(),
+                lower: () => text.toLowerCase(),
+                title: () => text.toLowerCase().replace(/\b\w/g, c => c.toUpperCase()),
+                reverse: () => text.split('').reverse().join('')
+            };
+            if (transforms[type]) {
+                input.value = transforms[type]();
+                analyzeText();
             }
         }
 
-        // Init
-        updateUnits();
-        updateColorPreview();
+        function clearText() {
+            document.getElementById('textInput').value = '';
+            analyzeText();
+        }
+
+        // ==================== JSON ====================
+        function formatJSON(pretty) {
+            const input = document.getElementById('jsonInput').value.trim();
+            const resultBox = document.getElementById('jsonResult');
+            const output = document.getElementById('jsonOutput');
+            
+            if (!input) {
+                showToast(i18n[currentLang].enterJSON);
+                return;
+            }
+            
+            try {
+                output.textContent = JSON.stringify(JSON.parse(input), null, pretty ? 2 : 0);
+                output.style.color = 'var(--text-primary)';
+                resultBox.classList.add('show');
+            } catch (e) {
+                output.textContent = 'Error: ' + e.message;
+                output.style.color = 'var(--danger)';
+                resultBox.classList.add('show');
+            }
+        }
+
+        function validateJSON() {
+            const input = document.getElementById('jsonInput').value.trim();
+            if (!input) {
+                showToast(i18n[currentLang].enterJSON);
+                return;
+            }
+            try {
+                JSON.parse(input);
+                showToast(i18n[currentLang].validJSON);
+            } catch (e) {
+                showToast(i18n[currentLang].invalidJSON + ': ' + e.message);
+            }
+        }
+
+        function copyJSON() {
+            const out = document.getElementById('jsonOutput').textContent;
+            if (!out || out.startsWith('Error')) {
+                showToast(i18n[currentLang].formatFirst);
+                return;
+            }
+            navigator.clipboard.writeText(out).then(() => showToast(i18n[currentLang].copied));
+        }
+
+        // ==================== INIT ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            setLang(currentLang);
+            updateUnits();
+            updateQRInput();
+        });
     </script>
 </body>
 </html>
