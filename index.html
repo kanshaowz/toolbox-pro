@@ -11,14 +11,22 @@
         :root {
             --bg-primary: #0f172a;
             --bg-secondary: #1e293b;
-            --bg-card: #334155;
+            --bg-card: rgba(51, 65, 85, 0.6);
+            --bg-card-hover: rgba(51, 65, 85, 0.8);
             --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
             --accent: #3b82f6;
             --accent-hover: #2563eb;
+            --accent-glow: rgba(59, 130, 246, 0.3);
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.2);
+            --shadow-md: 0 4px 20px rgba(0,0,0,0.3);
+            --shadow-lg: 0 10px 40px rgba(0,0,0,0.4);
+            --transition-fast: 0.15s ease;
+            --transition-base: 0.3s ease;
+            --transition-slow: 0.5s ease;
         }
         
         body {
@@ -26,6 +34,29 @@
             background: var(--bg-primary);
             color: var(--text-primary);
             min-height: 100vh;
+            background-image: 
+                radial-gradient(ellipse at 10% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 90% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 50%);
+        }
+        
+        /* Animated Background Orbs */
+        .bg-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            pointer-events: none;
+            animation: float 20s infinite ease-in-out;
+        }
+        .bg-orb-1 { width: 400px; height: 400px; background: var(--accent); top: -100px; left: -100px; animation-delay: 0s; }
+        .bg-orb-2 { width: 300px; height: 300px; background: #8b5cf6; bottom: -50px; right: -50px; animation-delay: -5s; }
+        .bg-orb-3 { width: 250px; height: 250px; background: #ec4899; top: 50%; left: 50%; animation-delay: -10s; }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(30px, -30px) scale(1.1); }
+            50% { transform: translate(-20px, 20px) scale(0.9); }
+            75% { transform: translate(20px, 30px) scale(1.05); }
         }
         
         /* Language Selector */
@@ -149,10 +180,20 @@
         }
         
         .tool-card {
-            background: var(--bg-secondary);
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 20px;
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 28px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            transition: all var(--transition-base);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .tool-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(59, 130, 246, 0.2);
         }
         
         .tool-title {
@@ -201,42 +242,71 @@
         }
         
         .btn {
-            padding: 12px 24px;
-            font-size: 0.95rem;
+            padding: 14px 28px;
+            font-size: 1rem;
             font-weight: 600;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all var(--transition-fast);
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            justify-content: center;
+            gap: 8px;
             margin: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+        }
+        
+        .btn:hover::before {
+            opacity: 1;
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
         }
         
         .btn-primary {
-            background: var(--accent);
+            background: linear-gradient(135deg, var(--accent), #4f46e5);
             color: white;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
         }
         
         .btn-primary:hover {
-            background: var(--accent-hover);
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5);
         }
         
         .btn-secondary {
-            background: var(--bg-card);
+            background: var(--bg-card-hover);
             color: var(--text-primary);
-            border: 2px solid rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.1);
         }
         
         .btn-secondary:hover {
             border-color: var(--accent);
+            background: rgba(59, 130, 246, 0.1);
+            transform: translateY(-2px);
         }
         
         .btn-success {
-            background: var(--success);
+            background: linear-gradient(135deg, var(--success), #059669);
             color: white;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
         }
         
         .result-box {
@@ -258,15 +328,40 @@
         }
         
         .password-result {
-            font-family: 'SF Mono', monospace;
+            font-family: 'SF Mono', 'Fira Code', monospace;
             font-size: 1.3rem;
             letter-spacing: 2px;
             word-break: break-all;
-            padding: 16px;
-            background: var(--bg-primary);
-            border-radius: 8px;
+            padding: 20px;
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 12px;
             position: relative;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all var(--transition-base);
         }
+        
+        .password-result:hover {
+            border-color: var(--accent);
+        }
+        
+        .password-strength {
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            margin-top: 12px;
+            overflow: hidden;
+        }
+        
+        .password-strength-bar {
+            height: 100%;
+            width: 0;
+            border-radius: 2px;
+            transition: all var(--transition-base);
+        }
+        
+        .strength-weak { background: var(--danger); width: 33%; }
+        .strength-medium { background: var(--warning); width: 66%; }
+        .strength-strong { background: var(--success); width: 100%; }
         
         .copy-btn {
             position: absolute;
@@ -353,23 +448,49 @@
             color: var(--accent);
         }
         
-        .toast {
+        .toast-container {
             position: fixed;
-            bottom: 20px;
+            bottom: 30px;
             left: 50%;
-            transform: translateX(-50%) translateY(100px);
+            transform: translateX(-50%);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        }
+        
+        .toast {
             background: var(--success);
             color: white;
-            padding: 12px 24px;
-            border-radius: 25px;
+            padding: 14px 28px;
+            border-radius: 12px;
             opacity: 0;
-            transition: all 0.3s ease;
-            z-index: 1000;
+            transform: translateY(20px) scale(0.9);
+            transition: all var(--transition-base);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            pointer-events: auto;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
         .toast.show {
             opacity: 1;
-            transform: translateX(-50%) translateY(0);
+            transform: translateY(0) scale(1);
+        }
+        
+        .toast.error {
+            background: var(--danger);
+        }
+        
+        .toast.warning {
+            background: var(--warning);
+        }
+        
+        .toast.info {
+            background: var(--accent);
         }
         
         .error-msg {
@@ -385,9 +506,61 @@
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
             .lang-selector { top: 10px; right: 10px; }
         }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            margin-top: 40px;
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--bg-card);
+            border-radius: 5px;
+            border: 2px solid var(--bg-primary);
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent);
+        }
+        
+        /* Selection */
+        ::selection {
+            background: rgba(59, 130, 246, 0.3);
+            color: white;
+        }
+        
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Focus Visible */
+        :focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
     </style>
 </head>
 <body>
+    <!-- Animated Background -->
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+
     <!-- Language Selector -->
     <div class="lang-selector">
         <button class="lang-btn" onclick="toggleLang()">
@@ -433,6 +606,10 @@
                         <span data-i18n="clickGenerate">Click Generate</span>
                         <button class="copy-btn" onclick="copyPassword()" data-i18n="copy">Copy</button>
                     </div>
+                    <div class="password-strength">
+                        <div class="password-strength-bar" id="pwStrengthBar"></div>
+                    </div>
+                    <div id="pwStrengthText" style="text-align: center; margin-top: 8px; font-size: 0.85rem; color: var(--text-secondary);"></div>
                 </div>
                 
                 <div class="input-group">
@@ -698,7 +875,13 @@
         </section>
     </div>
 
-    <div class="toast" id="toast">Copied! ✅</div>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p data-i18n="footer">Made with ❤️ | Free Online Tools</p>
+    </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script>
@@ -713,7 +896,7 @@
                 pwTitle: '🔐 Password Generator', pwDesc: 'Create strong, secure passwords with custom options',
                 pwResult: 'Generated Password', clickGenerate: 'Click Generate', copy: 'Copy',
                 length: 'Length', uppercase: 'ABC', lowercase: 'abc', numbers: '123', symbols: '!@#',
-                generatePw: '🔄 Generate Password',
+                generatePw: '🔄 Generate Password', pwStrengthWeak: 'Weak', pwStrengthMedium: 'Medium', pwStrengthStrong: 'Strong',
                 qrTitle: '📱 QR Code Generator', qrDesc: 'Generate QR codes for URLs, text, and more',
                 contentType: 'Content Type', typeURL: '🔗 URL / Website', typeText: '📝 Text',
                 typeWiFi: '📶 WiFi', typeEmail: '📧 Email', typePhone: '📞 Phone',
@@ -739,7 +922,7 @@
                 enterContent: 'Please enter content', qrGenerated: 'QR Code generated!',
                 qrError: 'Error generating QR', downloaded: 'Downloaded!', selectOne: 'Select at least one option',
                 enterJSON: 'Enter JSON first', validJSON: '✅ Valid JSON!', invalidJSON: '❌ Invalid JSON',
-                formatFirst: 'Format JSON first'
+                formatFirst: 'Format JSON first', footer: 'Made with ❤️ | Free Online Tools'
             },
             zh: {
                 appName: '🧰 工具箱专业版', appDesc: '免费在线实用工具 - 快速、安全、易用',
@@ -749,7 +932,7 @@
                 pwTitle: '🔐 密码生成器', pwDesc: '创建强密码，支持自定义选项',
                 pwResult: '生成的密码', clickGenerate: '点击生成', copy: '复制',
                 length: '长度', uppercase: '大写', lowercase: '小写', numbers: '数字', symbols: '符号',
-                generatePw: '🔄 生成密码',
+                generatePw: '🔄 生成密码', pwStrengthWeak: '弱', pwStrengthMedium: '中等', pwStrengthStrong: '强',
                 qrTitle: '📱 二维码生成器', qrDesc: '生成网址、文本等二维码',
                 contentType: '内容类型', typeURL: '🔗 网址', typeText: '📝 文本',
                 typeWiFi: '📶 WiFi', typeEmail: '📧 邮箱', typePhone: '📞 电话',
@@ -932,11 +1115,23 @@
         }
 
         // ==================== TOAST ====================
-        function showToast(msg) {
-            const t = document.getElementById('toast');
-            t.textContent = msg;
-            t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 2000);
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️';
+            toast.innerHTML = `${icon} ${message}`;
+            
+            container.appendChild(toast);
+            
+            // Trigger animation
+            requestAnimationFrame(() => toast.classList.add('show'));
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
         }
 
         // ==================== PASSWORD ====================
@@ -965,6 +1160,41 @@
 
             document.getElementById('passwordOutput').innerHTML = 
                 pw + `<button class="copy-btn" onclick="copyPassword()">${i18n[currentLang].copy}</button>`;
+            
+            updatePasswordStrength(pw);
+        }
+        
+        function calculatePasswordStrength(password) {
+            let score = 0;
+            if (password.length >= 8) score++;
+            if (password.length >= 12) score++;
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) score++;
+            if (/[0-9]/.test(password)) score++;
+            if (/[^a-zA-Z0-9]/.test(password)) score++;
+            return Math.min(score, 4);
+        }
+        
+        function updatePasswordStrength(password) {
+            const strength = calculatePasswordStrength(password);
+            const bar = document.getElementById('pwStrengthBar');
+            const text = document.getElementById('pwStrengthText');
+            const t = i18n[currentLang];
+            
+            bar.className = 'password-strength-bar';
+            
+            if (strength <= 1) {
+                bar.classList.add('strength-weak');
+                text.textContent = t.pwStrengthWeak || 'Weak';
+                text.style.color = 'var(--danger)';
+            } else if (strength === 2 || strength === 3) {
+                bar.classList.add('strength-medium');
+                text.textContent = t.pwStrengthMedium || 'Medium';
+                text.style.color = 'var(--warning)';
+            } else {
+                bar.classList.add('strength-strong');
+                text.textContent = t.pwStrengthStrong || 'Strong';
+                text.style.color = 'var(--success)';
+            }
         }
 
         function copyPassword() {
