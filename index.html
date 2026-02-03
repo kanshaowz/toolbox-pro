@@ -340,6 +340,7 @@
 
     <nav class="nav-tabs">
         <button class="nav-tab active" onclick="switchTab('password')">🔐 Password</button>
+        <button class="nav-tab" onclick="switchTab('qr')">📱 QR Code</button>
         <button class="nav-tab" onclick="switchTab('converter')">🔄 Converter</button>
         <button class="nav-tab" onclick="switchTab('text')">📝 Text</button>
         <button class="nav-tab" onclick="switchTab('json')">📋 JSON</button>
@@ -386,6 +387,40 @@
                 </div>
                 
                 <button class="btn btn-primary" onclick="generatePassword()">🔄 Generate Password</button>
+            </div>
+        </section>
+
+        <!-- QR CODE GENERATOR -->
+        <section id="qr-section" class="section">
+            <div class="tool-card">
+                <h2 class="tool-title">📱 QR Code Generator</h2>
+                <p class="tool-description">Generate QR codes for URLs, text, and more</p>
+                
+                <div class="input-group">
+                    <label class="input-label">Content Type</label>
+                    <select class="select-field" id="qrType" onchange="updateQRInput()">
+                        <option value="url">🔗 URL / Website</option>
+                        <option value="text">📝 Text</option>
+                        <option value="wifi">📶 WiFi</option>
+                        <option value="email">📧 Email</option>
+                        <option value="phone">📞 Phone</option>
+                    </select>
+                </div>
+                
+                <div id="qrInputArea">
+                    <div class="input-group">
+                        <label class="input-label">URL or Text</label>
+                        <input type="text" class="input-field" id="qrContent" placeholder="https://example.com">
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary" onclick="generateQR()">⚡ Generate QR Code</button>
+                
+                <div class="result-box" id="qrResult" style="text-align:center">
+                    <canvas id="qrCanvas" style="background:white;padding:20px;border-radius:12px"></canvas>
+                    <br><br>
+                    <button class="btn btn-secondary" onclick="downloadQR()">📥 Download PNG</button>
+                </div>
             </div>
         </section>
 
@@ -500,6 +535,9 @@
 
     <div class="toast" id="toast">Copied! ✅</div>
 
+    <!-- QRCode.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
     <script>
         // ===== TAB SWITCHING =====
         function switchTab(tab) {
@@ -550,6 +588,107 @@
         function copyPassword() {
             const pw = document.getElementById('passwordOutput').textContent.replace('Copy', '').trim();
             navigator.clipboard.writeText(pw).then(() => showToast('Password copied!'));
+        }
+
+        // ===== QR CODE GENERATOR =====
+        function updateQRInput() {
+            const type = document.getElementById('qrType').value;
+            const area = document.getElementById('qrInputArea');
+            
+            const inputs = {
+                url: `<div class="input-group">
+                    <label class="input-label">URL</label>
+                    <input type="text" class="input-field" id="qrContent" placeholder="https://example.com">
+                </div>`,
+                text: `<div class="input-group">
+                    <label class="input-label">Text</label>
+                    <textarea class="input-field" id="qrContent" placeholder="Enter your text..."></textarea>
+                </div>`,
+                wifi: `<div class="input-group">
+                    <label class="input-label">Network Name (SSID)</label>
+                    <input type="text" class="input-field" id="qrWifiSSID" placeholder="WiFi Name">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Password</label>
+                    <input type="text" class="input-field" id="qrWifiPass" placeholder="Password">
+                </div>`,
+                email: `<div class="input-group">
+                    <label class="input-label">Email</label>
+                    <input type="email" class="input-field" id="qrEmail" placeholder="name@example.com">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Subject</label>
+                    <input type="text" class="input-field" id="qrSubject" placeholder="Subject">
+                </div>`,
+                phone: `<div class="input-group">
+                    <label class="input-label">Phone Number</label>
+                    <input type="tel" class="input-field" id="qrPhone" placeholder="+1 234 567 8900">
+                </div>`
+            };
+            
+            area.innerHTML = inputs[type] || inputs.url;
+        }
+
+        function getQRContent() {
+            const type = document.getElementById('qrType').value;
+            
+            switch(type) {
+                case 'url':
+                case 'text':
+                    return document.getElementById('qrContent')?.value || '';
+                case 'wifi':
+                    const ssid = document.getElementById('qrWifiSSID')?.value || '';
+                    const pass = document.getElementById('qrWifiPass')?.value || '';
+                    return `WIFI:T:WPA;S:${ssid};P:${pass};;`;
+                case 'email':
+                    const email = document.getElementById('qrEmail')?.value || '';
+                    const subject = document.getElementById('qrSubject')?.value || '';
+                    return `mailto:${email}?subject=${encodeURIComponent(subject)}`;
+                case 'phone':
+                    return `tel:${document.getElementById('qrPhone')?.value || ''}`;
+                default:
+                    return '';
+            }
+        }
+
+        function generateQR() {
+            const content = getQRContent();
+            if (!content) {
+                showToast('Please enter content');
+                return;
+            }
+
+            const canvas = document.getElementById('qrCanvas');
+            const result = document.getElementById('qrResult');
+            
+            // Clear previous
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Generate new QR
+            try {
+                new QRCode(canvas, {
+                    text: content,
+                    width: 256,
+                    height: 256,
+                    colorDark: '#000000',
+                    colorLight: '#ffffff',
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+                result.classList.add('show');
+                showToast('QR Code generated!');
+            } catch(e) {
+                showToast('Error generating QR');
+            }
+        }
+
+        function downloadQR() {
+            const canvas = document.getElementById('qrCanvas');
+            const link = document.createElement('a');
+            link.download = 'qrcode.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            showToast('Downloaded!');
         }
 
         // ===== UNIT CONVERTER =====
